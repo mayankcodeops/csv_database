@@ -42,8 +42,11 @@ class Handler(BaseHTTPRequestHandler):
             multipart_headers = {'Content-Type': self.headers['Content-Type'],
                                  'Content-Length': int(self.headers['Content-Length'])}
             multipart.parse_form(multipart_headers, self.rfile, on_field, on_file)
-            print(fields)
-            print(files)
+            for file, file_details in files.items():
+                with open(file_details['name'], 'wb') as f:
+                    file_object = file_details['file_object']
+                    file_object.seek(0)
+                    f.write(file_object.read())
             self.send_response(201, 'Created')
             self.end_headers()
             self.wfile.write("<h1>File Uploaded</h1>".encode('utf8'))
